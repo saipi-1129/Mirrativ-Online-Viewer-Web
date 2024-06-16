@@ -8,8 +8,12 @@ import threading
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-def fetch_online_users(live_id):
-    while True:
+# スレッドとフラグを管理するための変数
+threads = {}
+stop_flags = {}
+
+def fetch_online_users(live_id, stop_flag):
+    while not stop_flag.is_set():
         url = f"https://www.mirrativ.com/api/live/online_users?live_id={live_id}&page=1"
         headers = {
             'User-Agent': 'MR_APP/10.45.3/Android/PIXEL 8/12',
@@ -40,8 +44,27 @@ def index():
 @socketio.on('start_fetching')
 def start_fetching(data):
     live_id = data['live_id']
-    thread = threading.Thread(target=fetch_online_users, args=(live_id,))
+    
+    # 既存のスレッドを停止
+    if live_id in stop_flags:
+        stop_flags[live_id].set()
+        threads[live_id].join()
+    
+    # 新しいスレッドを開始
+    stop_flag = threading.Event()
+    stop_flags[live_id] = stop_flag
+    thread = threading.Thread(target=fetch_online_users, args=(live_id, stop_flag))
+    threads[live_id] = thread
     thread.start()
+
+@socketio.on('stop_fetching')
+def stop_fetching(data):
+    live_id = data['live_id']
+    if live_id in stop_flags:
+        stop_flags[live_id].set()
+        threads[live_id].join()
+        del stop_flags[live_id]
+        del threads[live_id]
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
