@@ -1,105 +1,108 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>オンラインユーザー</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        h1 {
-            color: #4CAF50;
-        }
-        input, button {
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #time {
-            font-size: 18px;
-            margin: 20px 0;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-            max-width: 400px;
-            height: 300px; /* 固定高さ */
-            overflow-y: auto; /* スクロール可能にする */
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-        li {
-            background-color: #fff;
-            margin: 5px 0;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        #error {
-            color: red;
-            font-weight: bold;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      h1 {
+        color: #4caf50;
+      }
+      input,
+      button {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #time {
+        font-size: 18px;
+        margin: 20px 0;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 600px;
+        height: 1000px; /* 固定高さ */
+        overflow-y: auto; /* スクロール可能にする */
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+      }
+      li {
+        background-color: #fff;
+        margin: 5px 0;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      #error {
+        color: red;
+        font-weight: bold;
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            var socket = io();
-            var currentLiveId = null;
+      document.addEventListener("DOMContentLoaded", (event) => {
+        var socket = io();
+        var currentLiveId = null;
 
-            socket.on('update_users', function(data) {
-                if (data.error) {
-                    document.getElementById('error').innerText = data.error;
-                } else {
-                    document.getElementById('time').innerText = data.time;
-                    var userList = document.getElementById('user_list');
-                    userList.innerHTML = '';
-                    data.users.forEach(function(user) {
-                        var li = document.createElement('li');
-                        li.innerText = `${user.name}, ユーザーID: ${user.user_id}`;
-                        userList.appendChild(li);
-                    });
-                }
+        socket.on("update_users", function (data) {
+          if (data.error) {
+            document.getElementById("error").innerText = data.error;
+          } else {
+            document.getElementById("time").innerText = data.time;
+            var userList = document.getElementById("user_list");
+            userList.innerHTML = "";
+            data.users.forEach(function (user) {
+              var li = document.createElement("li");
+              li.innerText = `${user.name}, ユーザーID: ${user.user_id}`;
+              userList.appendChild(li);
             });
-
-            document.getElementById('start_button').addEventListener('click', function() {
-                var liveId = document.getElementById('live_id').value;
-                if (currentLiveId) {
-                    socket.emit('stop_fetching', { live_id: currentLiveId });
-                }
-                currentLiveId = liveId;
-                socket.emit('start_fetching', { live_id: liveId });
-            });
+          }
         });
+
+        document
+          .getElementById("start_button")
+          .addEventListener("click", function () {
+            var liveId = document.getElementById("live_id").value;
+            if (currentLiveId) {
+              socket.emit("stop_fetching", { live_id: currentLiveId });
+            }
+            currentLiveId = liveId;
+            socket.emit("start_fetching", { live_id: liveId });
+          });
+      });
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>オンラインユーザー</h1>
-    <input type="text" id="live_id" placeholder="LiveId">
+    <input type="text" id="live_id" placeholder="LiveId" />
     <button id="start_button">開始</button>
     <p id="time"></p>
     <ul id="user_list"></ul>
     <p id="error"></p>
-</body>
+  </body>
 </html>
