@@ -16,11 +16,16 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        min-height: 100vh;
+        box-sizing: border-box; /* スクロールバーのズレ対策 */
       }
+    
       h1 {
         color: #4caf50;
+        text-align: center;
+        font-size: 2em; /* モバイルでも読みやすいサイズに */
       }
+    
       input,
       button {
         padding: 10px;
@@ -28,51 +33,99 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 16px;
+        width: 100%; /* モバイル画面に合わせるために幅を100%に */
+        box-sizing: border-box;
       }
+    
       button {
         background-color: #4caf50;
         color: white;
         cursor: pointer;
       }
+    
       button:hover {
         background-color: #45a049;
       }
+    
       .fa-refresh {
         cursor: pointer;
       }
-      
-
+    
       #time {
         font-size: 18px;
         margin: 20px 0;
       }
+    
       ul {
         list-style-type: none;
         padding: 0;
         margin: 0;
         width: 100%;
         max-width: 600px;
-        height: 1000px; /* 固定高さ */
-        overflow-y: auto; /* スクロール可能にする */
+        height: 1000px; /* モバイル表示用に高さを調整 */
+        overflow-y: auto;
         border: 1px solid #ddd;
         border-radius: 5px;
         background-color: #fff;
       }
+    
       li {
         background-color: #fff;
         margin: 5px 0;
         padding: 10px;
         border-bottom: 1px solid #ddd;
+        
       }
+    
       #error {
         color: red;
         font-weight: bold;
       }
+    
+      .how img {
+        max-width: 600px; /* 画像の最大幅を設定 */
+        width: 100%; /* 幅を100%にして親要素に合わせる */
+        height: auto; /* 高さは自動調整 */
+      }
+    
+      /* モバイル用のスタイル */
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+    
+        h1 {
+          font-size: 1.5em;
+        }
+    
+        ul {
+          height: 1000px; /* モバイル表示用にリストの高さをさらに調整 */
+        }
+    
+        input,
+        button {
+          font-size: 14px;
+        }
+    
+        .how img {
+          max-width: 100%; /* スマホの画面幅に合わせて画像を縮小 */
+          height: auto;
+        }
+      }
     </style>
+    
   </head>
   <body>
+    <h1>視聴者一覧</h1>
+    <div class="how">
+      <h2>使い方</h2>
+      <p><a href="https://www.mirrativ.com/">ブラウザ版サイト</a>からURLをコピーして貼り付け</p>
+      <!-- <img src="images/example.png" alt="" >  -->
+    </div>
+
+
     <form action="/liveid" method="POST">
-      <label for="liveid">liveid:</label>
+      <label for="liveid">URL:</label>
       <input name="liveid" value=""></input>
       <button type="submit">送信</button>
       <a onclick="window.location.reload(true);">
@@ -81,7 +134,7 @@
     </form>
 
 
-    <h1>オンラインユーザー</h1>
+
     {% if error %}
     <div id="error">{{ error }}</div>
     {% endif %}
@@ -98,16 +151,49 @@
 
     {% if hour is not none %}
     <div id="time">
-      更新時刻: {{ hour }}:{{ minute }}:{{ second }}
+      更新時刻: {{ time }}
     </div>
     {% endif %}
   </body>
   <script>
-    // Only activate auto-reload if the current URL is /liveid
+    let reloadInterval;
+  
+    // リロードを開始する関数
+    function startAutoReload() {
+      if (!reloadInterval) {
+        reloadInterval = setInterval(function() {
+          window.location.reload(true);
+        }, 30000); // 30秒ごとにリロード
+      }
+    }
+  
+    // リロードを停止する関数
+    function stopAutoReload() {
+      if (reloadInterval) {
+        clearInterval(reloadInterval);
+        reloadInterval = null;
+      }
+    }
+  
+    // 現在のURLが /liveid であるかをチェックして、リロードを設定
     if (window.location.pathname === '/liveid') {
-      setInterval(function() {
-        window.location.reload(true);
-      }, 10000); // 10000 milliseconds = 10 seconds
+      const imgElement = document.querySelector('.how img');
+      if (imgElement) {
+        imgElement.style.display = 'none'; // 画像を隠す
+      }
+      // ページが非アクティブになった場合の処理
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+          // タブがアクティブになったらリロードを再開
+          startAutoReload();
+        } else {
+          // タブが非アクティブになったらリロードを停止
+          stopAutoReload();
+        }
+      });
+  
+      // ページ読み込み時にリロードを開始
+      startAutoReload();
     }
   </script>
 </html>

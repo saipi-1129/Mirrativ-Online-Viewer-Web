@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request
 import requests
-import time
+import datetime
+import re
 
 # Webアプリ作成
-app = Flask(__name__) 
+app = Flask(__name__, static_folder='./templates/images')
 
 # エンドポイント設定（ルーティング）
 @app.route('/')
@@ -12,8 +13,17 @@ def fetch_online_users():
     live_id = request.args.get('live_id', '') or request.form.get('liveid', '')
 
     if not live_id:
-        return render_template("index.html", hour=False, minute=False, second=False, names=False, userides=False, error="Live ID is required.")
+        return render_template("index.html", names=False, userides=False, error="Live ID is required.")
     else:
+        # URLが渡される想定で、その中からlive_idを正規表現で抽出
+        pattern = r"live/([a-zA-Z0-9_]+)"
+        match = re.search(pattern, live_id)  # live_idの中にURLが渡されたと想定して正規表現マッチ
+        if match:
+            live_id = match.group(1)  # live_idを更新
+        else:
+            # live_idがURL形式でない場合も、単にlive_idとして使う
+            pass
+        
         url = f"https://www.mirrativ.com/api/live/online_users?live_id={live_id}&page=1"
         headers = {
             'User-Agent': 'MR_APP/10.45.3/Android/PIXEL 8/12',
@@ -36,12 +46,11 @@ def fetch_online_users():
             userides = {item['name']: item['user_id'] for item in user_info}
             
             # 現在時刻を取得
-            current_time = time.localtime()
-            hour = current_time.tm_hour
-            minute = current_time.tm_min
-            second = current_time.tm_sec
+            dt_now = datetime.datetime.now()
+            print(dt_now.isoformat())
+            time = dt_now.isoformat()
             
-            return render_template("index.html", hour=hour, minute=minute, second=second, names=names, userides=userides, error=None)
+            return render_template("index.html", time=time, names=names, userides=userides, error=None)
         else:
             return render_template("index.html", error="Failed to fetch online users. Please try again later.")
 
@@ -53,5 +62,5 @@ def liveid():
     # POSTされたlive_idを使って再度fetch_online_users関数に処理を行わせる
     return fetch_online_users()
 
-if __name__ == '__main__': 
-    app.run(host="0.0.0.0",debug=True)
+if __name__ == '__main__':  
+    app.run(host="0.0.0.0", debug=True)
