@@ -4,185 +4,161 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>視聴者一覧</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    :root {
-      --primary: #4361ee;
-      --primary-light: #4895ef;
-      --secondary: #3f37c9;
-      --success: #4cc9f0;
-      --danger: #f72585;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #e9ecef;
-      --radius: 12px;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-
+    /* ダークモード基本スタイル */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Hiragino Kaku Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'メイリオ', Meiryo, 'MS Pゴシック', sans-serif;
     }
 
     body {
-      font-family: 'Noto Sans JP', sans-serif;
-      background-color: var(--light);
-      color: var(--dark);
+      background-color: #121212;
+      color: #e0e0e0;
       line-height: 1.6;
       padding: 20px;
-      min-height: 100vh;
-    }
-
-    .container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 20px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
     }
 
     h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-      position: relative;
-      display: inline-block;
+      color: #81d4fa;
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #0288d1;
+      font-size: 2rem;
     }
 
-    h1::after {
-      content: "";
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--success));
-      border-radius: 2px;
+    h2 {
+      color: #64b5f6;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #333;
     }
 
     .card {
-      background-color: white;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 2rem;
-      margin-bottom: 2rem;
+      background-color: #1e1e1e;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+      border: 1px solid #333;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
-    }
-
-    .card-title {
-      font-size: 1.5rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-      border-bottom: 2px solid var(--gray);
-      padding-bottom: 0.5rem;
-    }
-
-    .instructions {
-      margin-bottom: 1.5rem;
-    }
-
-    .instructions p {
-      margin: 0.7rem 0;
-    }
-
-    .form-control {
-      margin-bottom: 1rem;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
     }
 
     label {
       display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: var(--dark);
-    }
-
-    .input-group {
-      display: flex;
-      gap: 10px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #bbdefb;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 12px 16px;
-      border: 2px solid var(--gray);
-      border-radius: var(--radius);
-      font-size: 1rem;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      padding: 12px;
+      background-color: #333;
+      border: 1px solid #444;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      color: #ffffff;
+      margin-bottom: 15px;
     }
 
     input[type="text"]:focus {
+      border-color: #2196f3;
       outline: none;
-      border-color: var(--primary-light);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+      box-shadow: 0 0 8px rgba(33, 150, 243, 0.5);
     }
 
-    .btn {
+    button {
+      background-color: #0288d1;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s, transform 0.2s;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 12px 24px;
-      background-color: var(--primary);
-      color: white;
-      font-weight: 500;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      font-size: 1rem;
-      white-space: nowrap;
+      gap: 10px;
+      font-weight: bold;
     }
 
-    .btn:hover {
-      background-color: var(--secondary);
+    button:hover {
+      background-color: #0277bd;
       transform: translateY(-2px);
     }
 
-    .btn:active {
+    button:active {
       transform: translateY(0);
     }
 
+    .btn-primary {
+      background-color: #0288d1;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
     .btn-refresh {
-      background-color: var(--success);
+      background-color: #424242;
+      border: 1px solid #555;
+      width: 100%;
     }
 
     .btn-refresh:hover {
-      background-color: var(--primary-light);
+      background-color: #4f4f4f;
+    }
+
+    p {
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    a {
+      color: #64b5f6;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-weight: bold;
+    }
+
+    a:hover {
+      color: #81d4fa;
+      text-decoration: underline;
     }
 
     .user-list {
-      height: 500px;
-      overflow-y: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--gray);
-      background-color: white;
-      padding: 0;
       list-style: none;
+      max-height: 500px;
+      overflow-y: auto;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-top: 20px;
     }
 
     .user-list li {
-      padding: 15px 20px;
-      border-bottom: 1px solid var(--gray);
+      padding: 15px;
+      border-bottom: 1px solid #333;
+      transition: background-color 0.2s;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background-color 0.2s ease;
     }
 
     .user-list li:hover {
-      background-color: var(--light);
+      background-color: #252525;
     }
 
     .user-list li:last-child {
@@ -190,91 +166,99 @@
     }
 
     .user-name {
-      font-weight: 500;
+      font-weight: bold;
+      color: #e0e0e0;
     }
 
     .user-id {
-      color: #666;
-      font-size: 0.9rem;
+      color: #9e9e9e;
+      font-size: 0.9em;
     }
 
-    .alert {
-      padding: 15px 20px;
-      border-radius: var(--radius);
-      margin-bottom: 1rem;
-      font-weight: 500;
+    #error {
+      background-color: rgba(244, 67, 54, 0.1);
+      border-left: 4px solid #f44336;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+      color: #ef9a9a;
+      font-weight: bold;
     }
 
-    .alert-danger {
-      background-color: rgba(247, 37, 133, 0.1);
-      border-left: 4px solid var(--danger);
-      color: var(--danger);
-    }
-
-    .timestamp {
+    #time {
+      background-color: #252525;
+      padding: 10px 15px;
+      border-radius: 4px;
+      color: #9e9e9e;
+      font-size: 0.9em;
+      margin-top: 20px;
       display: inline-block;
-      margin-top: 1rem;
-      padding: 8px 16px;
-      background-color: var(--gray);
-      border-radius: var(--radius);
-      font-size: 0.9rem;
-      color: #666;
+      border-left: 3px solid #0288d1;
     }
 
     .empty-state {
-      padding: 2rem;
       text-align: center;
-      color: #666;
+      padding: 40px 20px;
+      color: #757575;
     }
 
-    .link {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease;
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #424242;
     }
 
-    .link:hover {
-      color: var(--secondary);
-      text-decoration: underline;
+    .instructions {
+      margin-bottom: 20px;
     }
 
-    /* モバイル用のスタイル */
-    @media (max-width: 600px) {
-      .container {
+    /* スクロールバーのスタイル */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #232323;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #666;
+    }
+
+    /* レスポンシブデザイン */
+    @media screen and (max-width: 480px) {
+      body {
         padding: 10px;
       }
-
-      h1 {
-        font-size: 1.8rem;
-      }
-
+      
       .card {
-        padding: 1.5rem;
+        padding: 15px;
       }
-
-      .card-title {
-        font-size: 1.2rem;
+      
+      h1 {
+        font-size: 1.5em;
       }
-
-      .input-group {
-        flex-direction: column;
+      
+      h2 {
+        font-size: 1.2em;
       }
-
-      .btn {
-        width: 100%;
-      }
-
-      .user-list {
-        height: 400px;
+      
+      button {
+        padding: 10px 15px;
       }
     }
 
-    /* アニメーション */
+    /* フェードインアニメーション */
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
       }
       to {
         opacity: 1;
@@ -282,9 +266,8 @@
       }
     }
 
-    .animate-in {
+    .fade-in {
       animation: fadeIn 0.5s ease forwards;
-      opacity: 0;
     }
 
     .delay-1 {
@@ -301,67 +284,62 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>視聴者一覧</h1>
-    </header>
+  <h1 class="fade-in">視聴者一覧</h1>
 
-    <div class="card animate-in">
-      <h2 class="card-title">使い方</h2>
-      <div class="instructions">
-        <p>1. <a href="https://liveid.saipi1129.com/" class="link">UserIDから配信中のURLを取得するツール</a>からURLをコピーして貼り付け</p>
-        <p>2. または、<a href="" class="link">公式サイト</a>からリンクをコピーして貼り付け</p>
-      </div>
+  <div class="card fade-in delay-1">
+    <h2>使い方</h2>
+    <div class="instructions">
+      <p><i class="fas fa-arrow-right"></i> <a href="https://liveid.saipi1129.com/" target="_blank">UserIDから配信中のURLを取得するツール</a>からURLをコピーして貼り付け</p>
+      <p><i class="fas fa-arrow-right"></i> または、<a href="" target="_blank">公式サイト</a>からリンクをコピーして貼り付け</p>
     </div>
+  </div>
 
-    <div class="card animate-in delay-1">
-      <h2 class="card-title">URLを入力</h2>
-      <form action="/liveid" method="POST">
-        <div class="form-control">
-          <label for="liveid">配信URL:</label>
-          <div class="input-group">
-            <input type="text" id="liveid" name="liveid" placeholder="URLを貼り付けてください" value="">
-            <button type="submit" class="btn">
-              <i class="fas fa-paper-plane"></i> 送信
-            </button>
-          </div>
-        </div>
-        <button type="button" class="btn btn-refresh" onclick="window.location.reload(true);">
-          <i class="fas fa-sync-alt"></i> 更新
-        </button>
-      </form>
-    </div>
+  <div class="card fade-in delay-2">
+    <h2>URLを入力</h2>
+    <form action="/liveid" method="POST">
+      <label for="liveid">配信URL:</label>
+      <input type="text" id="liveid" name="liveid" placeholder="URLを貼り付けてください" value="">
+      
+      <button type="submit" class="btn-primary">
+        <i class="fas fa-paper-plane"></i> 送信する
+      </button>
+      
+      <button type="button" class="btn-refresh" onclick="window.location.reload(true);">
+        <i class="fas fa-sync-alt"></i> 更新する
+      </button>
+    </form>
+  </div>
 
-    {% if error %}
-    <div class="alert alert-danger animate-in delay-2">
-      <i class="fas fa-exclamation-circle"></i> {{ error }}
+  {% if error %}
+  <div id="error" class="fade-in delay-3">
+    <i class="fas fa-exclamation-circle"></i> {{ error }}
+  </div>
+  {% endif %}
+
+  <div class="card fade-in delay-3">
+    <h2>視聴者リスト</h2>
+    
+    {% if names %}
+    <ul class="user-list">
+      {% for name, user_id in names.items() %}
+      <li>
+        <span class="user-name">{{ name }}</span>
+        <span class="user-id">User ID: {{ userides[name] }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-users"></i>
+      <p>視聴者がいません。URLを入力して送信ボタンをクリックしてください。</p>
     </div>
     {% endif %}
-
-    <div class="card animate-in delay-2">
-      <h2 class="card-title">視聴者リスト</h2>
-      {% if names %}
-      <ul class="user-list">
-        {% for name, user_id in names.items() %}
-        <li>
-          <span class="user-name">{{ name }}</span>
-          <span class="user-id">User ID: {{ userides[name] }}</span>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <div class="empty-state">
-        <i class="fas fa-users fa-3x" style="color: var(--gray); margin-bottom: 1rem;"></i>
-        <p>視聴者がいません。URLを入力して送信ボタンをクリックしてください。</p>
-      </div>
-      {% endif %}
-
-      {% if hour is not none %}
-      <div class="timestamp">
-        <i class="far fa-clock"></i> 更新時刻: {{ time }}
-      </div>
-      {% endif %}
+    
+    {% if hour is not none %}
+    <div id="time">
+      <i class="far fa-clock"></i> 更新時刻: {{ time }}
     </div>
+    {% endif %}
   </div>
 
   <script>
