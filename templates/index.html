@@ -1,164 +1,372 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <meta http-equiv="refresh" content="2; URL="> -->
-    <title>オンラインユーザー</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        color: #333;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        box-sizing: border-box; /* スクロールバーのズレ対策 */
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>視聴者一覧</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #e9ecef;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    h1::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      border-radius: 2px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--gray);
+      padding-bottom: 0.5rem;
+    }
+
+    .instructions {
+      margin-bottom: 1.5rem;
+    }
+
+    .instructions p {
+      margin: 0.7rem 0;
+    }
+
+    .form-control {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--gray);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background-color: var(--primary);
+      color: white;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-refresh {
+      background-color: var(--success);
+    }
+
+    .btn-refresh:hover {
+      background-color: var(--primary-light);
+    }
+
+    .user-list {
+      height: 500px;
+      overflow-y: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--gray);
+      background-color: white;
+      padding: 0;
+      list-style: none;
+    }
+
+    .user-list li {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--gray);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.2s ease;
+    }
+
+    .user-list li:hover {
+      background-color: var(--light);
+    }
+
+    .user-list li:last-child {
+      border-bottom: none;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
+
+    .user-id {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .alert-danger {
+      background-color: rgba(247, 37, 133, 0.1);
+      border-left: 4px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .timestamp {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 8px 16px;
+      background-color: var(--gray);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .empty-state {
+      padding: 2rem;
+      text-align: center;
+      color: #666;
+    }
+
+    .link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .link:hover {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+
+    /* モバイル用のスタイル */
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
       }
-    
+
       h1 {
-        color: #4caf50;
-        text-align: center;
-        font-size: 2em; /* モバイルでも読みやすいサイズに */
+        font-size: 1.8rem;
       }
-    
-      input,
-      button {
-        padding: 10px;
-        margin: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 16px;
-        width: 100%; /* モバイル画面に合わせるために幅を100%に */
-        box-sizing: border-box;
+
+      .card {
+        padding: 1.5rem;
       }
-    
-      button {
-        background-color: #4caf50;
-        color: white;
-        cursor: pointer;
+
+      .card-title {
+        font-size: 1.2rem;
       }
-    
-      button:hover {
-        background-color: #45a049;
+
+      .input-group {
+        flex-direction: column;
       }
-    
-      .fa-refresh {
-        cursor: pointer;
-      }
-    
-      #time {
-        font-size: 18px;
-        margin: 20px 0;
-      }
-    
-      ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
+
+      .btn {
         width: 100%;
-        max-width: 600px;
-        height: 1000px; /* モバイル表示用に高さを調整 */
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #fff;
       }
-    
-      li {
-        background-color: #fff;
-        margin: 5px 0;
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-        
+
+      .user-list {
+        height: 400px;
       }
-    
-      #error {
-        color: red;
-        font-weight: bold;
+    }
+
+    /* アニメーション */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
       }
-    
-      .how img {
-        max-width: 600px; /* 画像の最大幅を設定 */
-        width: 100%; /* 幅を100%にして親要素に合わせる */
-        height: auto; /* 高さは自動調整 */
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-    
-      /* モバイル用のスタイル */
-      @media (max-width: 600px) {
-        body {
-          padding: 10px;
-        }
-    
-        h1 {
-          font-size: 1.5em;
-        }
-    
-        ul {
-          height: 1000px; /* モバイル表示用にリストの高さをさらに調整 */
-        }
-    
-        input,
-        button {
-          font-size: 14px;
-        }
-    
-        .how img {
-          max-width: 100%; /* スマホの画面幅に合わせて画像を縮小 */
-          height: auto;
-        }
-      }
-    </style>
-    
-  </head>
-  <body>
-    <h1>視聴者一覧</h1>
-    <div class="how">
-      <h2>使い方</h2>
-      <p><a href="https://liveid.saipi1129.com/">UserIDから配信中のURLを取得するツール</a>からURLをコピーして貼り付け</p>
-      <p>または、<a href="">公式サイト</a>からリンクをコピーして貼り付け</p>
-      <!-- <img src="images/example.png" alt="" >  -->
+    }
+
+    .animate-in {
+      animation: fadeIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>視聴者一覧</h1>
+    </header>
+
+    <div class="card animate-in">
+      <h2 class="card-title">使い方</h2>
+      <div class="instructions">
+        <p>1. <a href="https://liveid.saipi1129.com/" class="link">UserIDから配信中のURLを取得するツール</a>からURLをコピーして貼り付け</p>
+        <p>2. または、<a href="" class="link">公式サイト</a>からリンクをコピーして貼り付け</p>
+      </div>
     </div>
 
-
-    <form action="/liveid" method="POST">
-      <label for="liveid">URL:</label>
-      <input name="liveid" value=""></input>
-      <button type="submit">送信</button>
-      <a onclick="window.location.reload(true);">
-        <i class="fa-refresh" aria-hidden="true"></i><span>更新</span>
-      </a>
-    </form>
-
-
+    <div class="card animate-in delay-1">
+      <h2 class="card-title">URLを入力</h2>
+      <form action="/liveid" method="POST">
+        <div class="form-control">
+          <label for="liveid">配信URL:</label>
+          <div class="input-group">
+            <input type="text" id="liveid" name="liveid" placeholder="URLを貼り付けてください" value="">
+            <button type="submit" class="btn">
+              <i class="fas fa-paper-plane"></i> 送信
+            </button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-refresh" onclick="window.location.reload(true);">
+          <i class="fas fa-sync-alt"></i> 更新
+        </button>
+      </form>
+    </div>
 
     {% if error %}
-    <div id="error">{{ error }}</div>
-    {% endif %}
-    
-    {% if names %}
-    <ul>
-      {% for name, user_id in names.items() %}
-        <li>{{ name }} - User ID: {{ userides[name] }}</li>
-      {% endfor %}
-    </ul>
-    {% else %}
-      <p>No users found.</p>
-    {% endif %}
-
-    {% if hour is not none %}
-    <div id="time">
-      更新時刻: {{ time }}
+    <div class="alert alert-danger animate-in delay-2">
+      <i class="fas fa-exclamation-circle"></i> {{ error }}
     </div>
     {% endif %}
-  </body>
+
+    <div class="card animate-in delay-2">
+      <h2 class="card-title">視聴者リスト</h2>
+      {% if names %}
+      <ul class="user-list">
+        {% for name, user_id in names.items() %}
+        <li>
+          <span class="user-name">{{ name }}</span>
+          <span class="user-id">User ID: {{ userides[name] }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-users fa-3x" style="color: var(--gray); margin-bottom: 1rem;"></i>
+        <p>視聴者がいません。URLを入力して送信ボタンをクリックしてください。</p>
+      </div>
+      {% endif %}
+
+      {% if hour is not none %}
+      <div class="timestamp">
+        <i class="far fa-clock"></i> 更新時刻: {{ time }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
   <script>
     let reloadInterval;
-  
+
     // リロードを開始する関数
     function startAutoReload() {
       if (!reloadInterval) {
@@ -167,7 +375,7 @@
         }, 30000); // 30秒ごとにリロード
       }
     }
-  
+
     // リロードを停止する関数
     function stopAutoReload() {
       if (reloadInterval) {
@@ -175,13 +383,9 @@
         reloadInterval = null;
       }
     }
-  
+
     // 現在のURLが /liveid であるかをチェックして、リロードを設定
     if (window.location.pathname === '/liveid') {
-      const imgElement = document.querySelector('.how img');
-      if (imgElement) {
-        imgElement.style.display = 'none'; // 画像を隠す
-      }
       // ページが非アクティブになった場合の処理
       document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'visible') {
@@ -192,9 +396,10 @@
           stopAutoReload();
         }
       });
-  
+
       // ページ読み込み時にリロードを開始
       startAutoReload();
     }
   </script>
+</body>
 </html>
