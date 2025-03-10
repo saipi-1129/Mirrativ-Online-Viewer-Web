@@ -3,13 +3,11 @@ import requests
 import datetime
 import re
 
-# Webアプリ作成
 app = Flask(__name__, static_folder='./templates/images')
 
-# エンドポイント設定（ルーティング）
 @app.route('/')
 def fetch_online_users():
-    # live_idをクエリパラメータまたはPOSTデータから取得
+    # live_id
     live_id = request.args.get('live_id', '') or request.form.get('liveid', '')
 
     if not live_id:
@@ -21,7 +19,6 @@ def fetch_online_users():
         if match:
             live_id = match.group(1)  # live_idを更新
         else:
-            # live_idがURL形式でない場合も、単にlive_idとして使う
             pass
         
         url = f"https://www.mirrativ.com/api/live/online_users?live_id={live_id}&page=1"
@@ -45,7 +42,6 @@ def fetch_online_users():
             names = {item['name']: item['name'] for item in user_info}
             userides = {item['name']: item['user_id'] for item in user_info}
             
-            # 現在時刻を取得
             dt_now = datetime.datetime.now()
             print(dt_now.isoformat())
             time = dt_now.isoformat()
@@ -54,12 +50,10 @@ def fetch_online_users():
         else:
             return render_template("index.html", error="Failed to fetch online users. Please try again later.")
 
-# POSTリクエストでlive_idを受け取る
 @app.route("/liveid", methods=['POST'])
 def liveid():
     live_id = request.form['liveid']
     print(f"[+] LiveId POST Success: {live_id}")
-    # POSTされたlive_idを使って再度fetch_online_users関数に処理を行わせる
     return fetch_online_users()
 
 if __name__ == '__main__':  
